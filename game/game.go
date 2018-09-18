@@ -1,8 +1,7 @@
 package game
 
 import (
-	"fmt"
-	"io/ioutil"
+	"context"
 	"time"
 
 	termbox "github.com/nsf/termbox-go"
@@ -20,7 +19,8 @@ type Game struct {
 	Winner        int
 	players       []string
 	wonState      [][]int
-	trigger       chan int
+	ctx           context.Context
+	cancel        context.CancelFunc
 }
 
 func NewGame(width, height int) *Game {
@@ -30,12 +30,15 @@ func NewGame(width, height int) *Game {
 		rowState := make([]int, width)
 		state = append(state, rowState)
 	}
+	ctx, cancel := context.WithCancel(context.Background())
 
 	game := &Game{
 		Width:         width,
 		Height:        height,
 		State:         state,
 		CurrentPlayer: 1,
+		ctx:           ctx,
+		cancel:        cancel,
 	}
 	game.getOffset()
 	return game
@@ -193,8 +196,9 @@ func (g *Game) declareWinner() {
 	inf_loop:
 		for {
 			select {
-			case i := <-g.trigger:
-				ioutil.WriteFile("temp1", []byte(fmt.Sprintln(i)), 06400)
+			case <-g.ctx.Done():
+				g = NewGame(g.Width, g.Height)
+				g.Draw()
 				break inf_loop
 			default:
 			}
@@ -236,10 +240,7 @@ func (g *Game) togglePlayer() {
 }
 
 func (g *Game) Trigger() {
-	ioutil.WriteFile("temp3", []byte(fmt.Sprintln(g.wonState, g.Winner)), 06400)
-
 	if g.Winner != 0 {
-		ioutil.WriteFile("temp3", []byte(fmt.Sprintln(g.wonState, g.Winner)), 06400)
-		g.trigger <- 1
+		g.cancel()
 	}
 }
