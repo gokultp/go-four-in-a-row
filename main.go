@@ -30,8 +30,7 @@ loop:
 			if ev.Type == termbox.EventKey && ev.Key == termbox.KeyEsc {
 				break loop
 			} else if ev.Type == termbox.EventKey {
-				g.Trigger()
-				g.AddEntry(int(ev.Ch)-48, g.GetPlayer())
+				g.Input(int(ev.Ch) - 48)
 			}
 		}
 	}

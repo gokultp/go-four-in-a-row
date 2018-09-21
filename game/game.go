@@ -97,7 +97,7 @@ func getplayerDisplayPropsLarge(player, col, row int) (rune, termbox.Attribute, 
 	return ' ', termbox.ColorDefault, termbox.ColorBlack
 }
 
-func (g *Game) AddEntry(col, player int) {
+func (g *Game) addEntry(col, player int) {
 	if g.Winner != 0 {
 		return
 	}
@@ -227,10 +227,6 @@ func (g *Game) renderText(row int, text string) {
 
 }
 
-func (g *Game) GetPlayer() int {
-	return g.CurrentPlayer
-}
-
 func (g *Game) togglePlayer() {
 	if g.CurrentPlayer == 1 {
 		g.CurrentPlayer = 2
@@ -239,8 +235,11 @@ func (g *Game) togglePlayer() {
 	g.CurrentPlayer = 1
 }
 
-func (g *Game) Trigger() {
+func (g *Game) Input(col int) {
 	if g.Winner != 0 {
 		g.cancel()
+		return
 	}
+	g.addEntry(col, g.CurrentPlayer)
+
 }
