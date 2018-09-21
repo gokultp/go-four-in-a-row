@@ -25,6 +25,7 @@ type Game struct {
 	cancel        context.CancelFunc
 }
 
+// NewGame return a new instance of game
 func NewGame(width, height int) *Game {
 
 	state := [][]int{}
