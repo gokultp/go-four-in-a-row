@@ -6,16 +6,17 @@ import (
 )
 
 func main() {
+	// initialise termbox
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
 	}
 	defer termbox.Close()
-
-	event_queue := make(chan termbox.Event)
+	// channel eventQueue for listening events
+	eventQueue := make(chan termbox.Event)
 	go func() {
 		for {
-			event_queue <- termbox.PollEvent()
+			eventQueue <- termbox.PollEvent()
 		}
 	}()
 
@@ -25,14 +26,13 @@ func main() {
 loop:
 	for {
 		select {
-		case ev := <-event_queue:
+		case ev := <-eventQueue:
 			if ev.Type == termbox.EventKey && ev.Key == termbox.KeyEsc {
 				break loop
 			} else if ev.Type == termbox.EventKey {
 				g.Trigger()
 				g.AddEntry(int(ev.Ch)-48, g.GetPlayer())
 			}
-
 		}
 	}
 }
