@@ -7,8 +7,10 @@ import (
 	termbox "github.com/nsf/termbox-go"
 )
 
+// PlayerChar defines how should each player entries rendered
 var PlayerChar = []string{"\\//\\", "/\\\\/"}
 
+// Game defines the state of the game and arena details
 type Game struct {
 	State         [][]int
 	CurrentPlayer int
