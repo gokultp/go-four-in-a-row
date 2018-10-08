@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/gokultp/go-four-in-a-row/game"
+	"github.com/gokultp/go-four-in-a-row/pkg/game"
 	"github.com/nsf/termbox-go"
 )
 
