@@ -104,6 +104,9 @@ func (g *Game) addEntry(col, player int) {
 	if g.Winner != 0 {
 		return
 	}
+	if col < 0 || col > g.Width-1 {
+		return
+	}
 	if g.State[0][col] != 0 {
 		return
 	}
