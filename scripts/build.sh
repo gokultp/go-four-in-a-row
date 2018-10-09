@@ -78,7 +78,6 @@ OUTPUT="build/four-in-a-row"
 
 
 for PLATFORM in $PLATFORMS; do
-  echo $OUTPUT
   GOOS=${PLATFORM%/*}
   GOARCH=${PLATFORM#*/}
   BIN_FILENAME="${OUTPUT}-${GOOS}-${GOARCH}"
