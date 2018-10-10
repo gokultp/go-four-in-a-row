@@ -27,7 +27,15 @@
 
 [[constraint]]
   branch = "master"
+  name = "github.com/gokultp/go-four-in-a-row"
+
+[[constraint]]
+  branch = "master"
   name = "github.com/nsf/termbox-go"
+
+[[constraint]]
+  name = "github.com/smartystreets/goconvey"
+  version = "1.6.3"
 
 [prune]
   go-tests = true
