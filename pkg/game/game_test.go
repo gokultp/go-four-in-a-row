@@ -10,7 +10,6 @@ import (
 )
 
 func TestGetPlayerOneDisplayProps(t *testing.T) {
-	//termbox.ColorDefault, termbox.ColorBlack
 	convey.Convey("Given the player one", t, func() {
 		var player int = 1
 		convey.Convey("When get the player one display", func() {
