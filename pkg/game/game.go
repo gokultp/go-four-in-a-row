@@ -22,7 +22,7 @@ type Game struct {
 	players       []string
 	wonState      [][]int
 	ctx           context.Context
-	cancel        context.CancelFunc
+	Cancel        context.CancelFunc
 }
 
 // NewGame return a new instance of game
@@ -41,7 +41,7 @@ func NewGame(width, height int) *Game {
 		State:         state,
 		CurrentPlayer: 1,
 		ctx:           ctx,
-		cancel:        cancel,
+		Cancel:        cancel,
 	}
 	game.getOffset()
 	return game
@@ -242,10 +242,6 @@ func (g *Game) togglePlayer() {
 }
 
 func (g *Game) Input(col int) {
-	if g.Winner != 0 {
-		g.cancel()
-		return
-	}
 	g.addEntry(col, g.CurrentPlayer)
 
 }
