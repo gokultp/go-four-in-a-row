@@ -30,7 +30,13 @@ loop:
 			if ev.Type == termbox.EventKey && ev.Key == termbox.KeyEsc {
 				break loop
 			} else if ev.Type == termbox.EventKey {
-				g.Input(int(ev.Ch) - 48)
+				if g.Winner != 0 {
+					g.Cancel()
+					g = game.NewGame(10, 10)
+					g.Draw()
+				} else {
+					g.Input(int(ev.Ch) - 48)
+				}
 			}
 		}
 	}
