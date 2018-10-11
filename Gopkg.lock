@@ -3,14 +3,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8b4c858a19f9e7d76721fdd7967f1da492883a32ede89e9a369c43b365728d74"
-  name = "github.com/gokultp/go-four-in-a-row"
-  packages = ["pkg/game"]
-  pruneopts = "UT"
-  revision = "ee0a8cfeb63a9de146515933663afd59a433a38a"
-
-[[projects]]
-  branch = "master"
   digest = "1:f14d1b50e0075fb00177f12a96dd7addf93d1e2883c25befd17285b779549795"
   name = "github.com/gopherjs/gopherjs"
   packages = ["js"]
@@ -69,7 +61,6 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/gokultp/go-four-in-a-row/pkg/game",
     "github.com/nsf/termbox-go",
     "github.com/smartystreets/goconvey/convey",
   ]
