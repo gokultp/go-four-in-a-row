@@ -35,6 +35,8 @@ func convertBoard(board [][]int) (int64, int64, error) {
 				position += "0"
 			}
 		}
+		mask += "0"
+		position += "0"
 	}
 
 	positionInt, err := strconv.ParseInt(position, 2, 64)
@@ -65,4 +67,29 @@ func transposeRight(board [][]int) [][]int {
 		}
 	}
 	return newBoard
+}
+
+func connectFour(position int64, height uint64) bool {
+	// Horizontal check
+	m := position & (position >> (height + 1))
+	if m&(m>>14) != 0 {
+		return true
+	}
+	// Diagonal Left
+	m = position & (position >> height)
+	if m&(m>>12) != 0 {
+		return true
+	}
+	// Diagonal Right
+	m = position & (position >> (height + 2))
+	if m&(m>>16) != 0 {
+		return true
+	}
+	// Vertical
+	m = position & (position >> 1)
+	if m&(m>>2) != 0 {
+		return true
+	}
+	// Nothing found
+	return false
 }
