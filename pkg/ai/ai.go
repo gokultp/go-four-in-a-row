@@ -95,12 +95,27 @@ func connectFour(position int64, height uint64) bool {
 	return false
 }
 
-func makeMoveOne(mask int64, col int, height uint64) int64 {
-	newMask := (mask + (1 << (uint64(col) * (height + 1))))
-	return mask | newMask
+func makeMoveOne(mask int64, col int, height uint64) (int64, bool) {
+	newMask := mask | (mask + (1 << (uint64(col) * (height + 1))))
+	if !isValidMove(mask ^ newMask) {
+		return 0, false
+	}
+	return newMask, true
 }
 
-func makeMoveTwo(position int64, mask int64, col int, height uint64) int64 {
+func makeMoveTwo(position int64, mask int64, col int, height uint64) (int64, bool) {
 	newMask := mask | (mask + (1 << (uint64(col) * (height + 1))))
-	return position | (newMask ^ mask)
+	if !isValidMove((newMask ^ mask)) {
+		return 0, false
+	}
+	newPosition := position | (newMask ^ mask)
+	return newPosition, true
+}
+
+func isValidMove(position int64) bool {
+	bitString := strconv.FormatInt(int64(position), 2)
+	if len(bitString)%7 == 0 {
+		return false
+	}
+	return true
 }

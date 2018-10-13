@@ -174,14 +174,68 @@ func TestAddMove(t *testing.T) {
 		t.Errorf("Failed to converboard with error: %s", err.Error())
 	}
 
-	newMask := makeMoveOne(mask, moveCol, height)
-	newPosition := makeMoveTwo(position, mask, moveCol, height)
+	newMask, ok := makeMoveOne(mask, moveCol, height)
+	newPosition, ok := makeMoveTwo(position, mask, moveCol, height)
 
-	if newMask != maskR {
+	if newMask != maskR || ok != true {
 		t.Errorf("Failed to make move: %v should equal %v", newMask, maskR)
 	}
 
-	if newPosition != positionR {
+	if newPosition != positionR || ok != true {
 		t.Errorf("Failed to make move: %v should equal %v", newPosition, positionR)
+	}
+}
+
+func TestValidMove(t *testing.T) {
+	invalidMove, err := strconv.ParseInt("0000000000000000000000000000000000010000000000000", 2, 64)
+	validMove, err := strconv.ParseInt("0000000000000000000000000001000000000000000000000", 2, 64)
+	if err != nil {
+		t.Errorf("Failed to parse bit string: %s", err.Error())
+	}
+
+	expectInvalid := isValidMove(invalidMove)
+	expectValid := isValidMove(validMove)
+
+	if expectInvalid == true {
+		t.Errorf("Failed to determine valid move: %v should false", expectInvalid)
+	}
+
+	if expectValid != true {
+		t.Errorf("Failed to determine valid move: %v should true", expectValid)
+	}
+
+	moveCol := 4
+	height := uint64(6)
+
+	sampleBoard := [][]int{
+		{0, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 0, 2, 0, 0},
+		{0, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 1, 2, 0, 0},
+		{0, 0, 0, 1, 1, 0, 0},
+		{0, 0, 2, 1, 2, 2, 0},
+	}
+
+	_, mask, _ := convertBoard(sampleBoard)
+	_, ok := makeMoveOne(mask, moveCol, height)
+
+	sampleBoard2 := [][]int{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 2, 0, 0},
+		{0, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 1, 2, 0, 0},
+		{0, 0, 0, 1, 1, 0, 0},
+		{0, 0, 2, 1, 2, 2, 0},
+	}
+
+	_, mask2, _ := convertBoard(sampleBoard2)
+	_, ok2 := makeMoveOne(mask2, moveCol, height)
+
+	if ok != false {
+		t.Errorf("Failed to determine valid move: %v should false", ok)
+	}
+
+	if ok2 != true {
+		t.Errorf("Failed to determine valid move: %v should true", ok)
 	}
 }
