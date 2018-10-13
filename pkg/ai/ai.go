@@ -25,18 +25,19 @@ func convertBoard(board [][]int) (int64, int64, error) {
 		for _, col := range row {
 			switch col {
 			case 1:
-				position += "1"
-				mask += "1"
+				position = "1" + position
+				mask = "1" + mask
 			case 2:
-				mask += "1"
-				position += "0"
+				mask = "1" + mask
+				position = "0" + position
 			default:
-				mask += "0"
-				position += "0"
+				mask = "0" + mask
+				position = "0" + position
 			}
 		}
-		mask += "0"
-		position += "0"
+		// adds a buffer row for checking false positives
+		mask = "0" + mask
+		position = "0" + position
 	}
 
 	positionInt, err := strconv.ParseInt(position, 2, 64)
@@ -92,4 +93,14 @@ func connectFour(position int64, height uint64) bool {
 	}
 	// Nothing found
 	return false
+}
+
+func makeMoveOne(mask int64, col int, height uint64) int64 {
+	newMask := (mask + (1 << (uint64(col) * (height + 1))))
+	return mask | newMask
+}
+
+func makeMoveTwo(position int64, mask int64, col int, height uint64) int64 {
+	newMask := mask | (mask + (1 << (uint64(col) * (height + 1))))
+	return position | (newMask ^ mask)
 }

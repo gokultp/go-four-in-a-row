@@ -41,11 +41,11 @@ func TestConvertBoard(t *testing.T) {
 		t.Errorf("Failed to converboard with error: %s", err.Error())
 	}
 
-	expectedPosition, err := strconv.ParseInt("0000000000000000000001110000010100000000000000000", 2, 64)
+	expectedPosition, err := strconv.ParseInt("0000000000000000010100000111000000000000000000000", 2, 64)
 	if err != nil || position != expectedPosition {
 		t.Errorf("Invalid convertion: position %v should equal %v", position, expectedPosition)
 	}
-	expectedMask, err := strconv.ParseInt("0000000000000010000001110000111100010000000000000", 2, 64)
+	expectedMask, err := strconv.ParseInt("0000000000000100011110000111000000100000000000000", 2, 64)
 
 	if err != nil || mask != expectedMask {
 		t.Errorf("Invalid convertion: mask %v should equal %v", mask, expectedMask)
@@ -137,5 +137,51 @@ func TestConnectFour(t *testing.T) {
 
 	if expectedN != false || expectedTwoN != false {
 		t.Errorf("Failed to find connect four: %v should be false and %v should be false", expectedN, expectedTwoN)
+	}
+}
+
+func TestAddMove(t *testing.T) {
+	moveCol := 2
+	height := uint64(6)
+	sampleBoard := [][]int{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 1, 2, 0, 0},
+		{0, 0, 0, 1, 1, 0, 0},
+		{0, 0, 2, 1, 2, 2, 0},
+	}
+	sampleBoardResult := [][]int{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 1, 2, 0, 0},
+		{0, 0, 1, 1, 1, 0, 0},
+		{0, 0, 2, 1, 2, 2, 0},
+	}
+	sampleBoardResultTwo := [][]int{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 1, 2, 0, 0},
+		{0, 0, 2, 1, 1, 0, 0},
+		{0, 0, 2, 1, 2, 2, 0},
+	}
+	position, mask, err := convertBoard(sampleBoard)
+	positionR, _, err := convertBoard(sampleBoardResult)
+	_, maskR, err := convertBoard(sampleBoardResultTwo)
+	if err != nil {
+		t.Errorf("Failed to converboard with error: %s", err.Error())
+	}
+
+	newMask := makeMoveOne(mask, moveCol, height)
+	newPosition := makeMoveTwo(position, mask, moveCol, height)
+
+	if newMask != maskR {
+		t.Errorf("Failed to make move: %v should equal %v", newMask, maskR)
+	}
+
+	if newPosition != positionR {
+		t.Errorf("Failed to make move: %v should equal %v", newPosition, positionR)
 	}
 }
