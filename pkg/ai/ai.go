@@ -10,7 +10,7 @@ import (
 // C4AI represents the AI for connect four
 type C4AI struct{}
 
-// MakeMove takes a game and returns a valie move
+// MakeMove takes a game and returns a valid move
 func (ai *C4AI) MakeMove(g *game.Game) int {
 	return 0
 }
@@ -19,15 +19,19 @@ func convertBoard(board [][]int) (int64, int64, error) {
 	position := ""
 	mask := ""
 
+	board = transposeRight(board)
+
 	for _, row := range board {
-		for _, num := range row {
-			switch num {
+		for _, col := range row {
+			switch col {
 			case 1:
 				position += "1"
 				mask += "1"
 			case 2:
 				mask += "1"
+				position += "0"
 			default:
+				mask += "0"
 				position += "0"
 			}
 		}
@@ -46,4 +50,19 @@ func convertBoard(board [][]int) (int64, int64, error) {
 	}
 
 	return positionInt, maskInt, nil
+}
+
+func transposeRight(board [][]int) [][]int {
+	x := len(board)
+	y := len(board[0])
+	newBoard := make([][]int, y)
+	for i, row := range board {
+		for j, col := range row {
+			if len(newBoard[j]) == 0 {
+				newBoard[j] = make([]int, x)
+			}
+			newBoard[j][len(board)-1-i] = col
+		}
+	}
+	return newBoard
 }
