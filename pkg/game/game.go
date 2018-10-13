@@ -9,6 +9,7 @@ import (
 
 // PlayerChar defines how should each player entries rendered
 var PlayerChar = []string{"\\//\\", "/\\\\/"}
+var piece = '█'
 
 // Game defines the state of the game and arena details
 type Game struct {
@@ -27,7 +28,6 @@ type Game struct {
 
 // NewGame return a new instance of game
 func NewGame(width, height int) *Game {
-
 	state := [][]int{}
 	for i := 0; i < height; i++ {
 		rowState := make([]int, width)
@@ -83,19 +83,19 @@ func (g *Game) setContent(x, y int, show bool) {
 }
 func getplayerDisplayProps(player int) (rune, termbox.Attribute, termbox.Attribute) {
 	if player == 1 {
-		return 'X', termbox.ColorRed, termbox.ColorDefault
+		return piece, termbox.ColorRed, termbox.ColorDefault
 	}
 	if player == 2 {
-		return 'O', termbox.ColorBlue, termbox.ColorDefault
+		return piece, termbox.ColorBlue, termbox.ColorDefault
 	}
-	return ' ', termbox.ColorDefault, termbox.ColorBlack
+	return piece, termbox.ColorDefault, termbox.ColorBlack
 }
 func getplayerDisplayPropsLarge(player, col, row int) (rune, termbox.Attribute, termbox.Attribute) {
 	if player == 1 {
-		return ' ', termbox.ColorDefault, termbox.ColorRed
+		return piece, termbox.ColorRed, termbox.ColorDefault
 	}
 	if player == 2 {
-		return ' ', termbox.ColorDefault, termbox.ColorBlue
+		return piece, termbox.ColorBlue, termbox.ColorDefault
 	}
 	return ' ', termbox.ColorDefault, termbox.ColorBlack
 }
@@ -194,9 +194,6 @@ func (g *Game) isWon(col, row, player int) bool {
 }
 
 func (g *Game) declareWinner() {
-	if g.Winner != 0 {
-		g.renderText(12, "% won the game")
-	}
 	go func(g *Game) {
 		show := true
 	inf_loop:
@@ -211,6 +208,7 @@ func (g *Game) declareWinner() {
 			for i := 0; i < 4; i++ {
 				g.setContent(g.wonState[i][1], g.wonState[i][0], show)
 			}
+			g.renderText("% won the game", show)
 			show = !show
 			termbox.Flush()
 			time.Sleep(time.Millisecond * 500)
@@ -218,10 +216,15 @@ func (g *Game) declareWinner() {
 	}(g)
 }
 
-func (g *Game) renderText(row int, text string) {
-	x, y := g.offsetX, g.offsetY+row*2
+func (g *Game) renderText(text string, show bool) {
+	x, y := g.offsetX+8, g.offsetY+9
 
 	for i := 0; i < len(text); i++ {
+		if !show {
+			termbox.SetCell(x, y+i, rune(' '), termbox.ColorDefault, termbox.ColorDefault)
+			termbox.SetCell(x+i, y, rune(' '), termbox.ColorDefault, termbox.ColorDefault)
+			continue
+		}
 		if text[i] == byte('%') {
 			ch, fore, bg := getplayerDisplayProps(g.Winner)
 			termbox.SetCell(x, y+i, ch, fore, bg)
@@ -230,7 +233,6 @@ func (g *Game) renderText(row int, text string) {
 		}
 	}
 	termbox.Flush()
-
 }
 
 func (g *Game) togglePlayer() {
@@ -243,5 +245,4 @@ func (g *Game) togglePlayer() {
 
 func (g *Game) Input(col int) {
 	g.addEntry(col, g.CurrentPlayer)
-
 }
