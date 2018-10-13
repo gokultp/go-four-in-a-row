@@ -26,6 +26,47 @@ func TestMakeMove(t *testing.T) {
 	}
 }
 
+func TestRandomMove(t *testing.T) {
+	width := 7
+	height := 6
+
+	sampleBoard := [][]int{
+		{2, 1, 1, 0, 1, 2, 1},
+		{1, 2, 2, 1, 2, 1, 2},
+		{2, 1, 1, 2, 1, 2, 1},
+		{1, 2, 2, 1, 2, 1, 2},
+		{2, 1, 1, 2, 1, 2, 1},
+		{1, 2, 2, 1, 2, 1, 2},
+	}
+
+	sampleBoard2 := [][]int{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 1, 2, 0, 0},
+		{0, 0, 0, 1, 1, 0, 0},
+		{0, 0, 2, 1, 2, 2, 0},
+	}
+
+	_, mask, _ := convertBoard(sampleBoard)
+	col, err := makeRandomMove(mask, width, height)
+
+	_, mask2, _ := convertBoard(sampleBoard2)
+	col2, err := makeRandomMove(mask2, width, height)
+
+	if err != nil {
+		t.Errorf("Unable to make random move: %s", err.Error())
+	}
+
+	if col != 3 {
+		t.Errorf("Invalid random move: %v should be the only available spot is 3", col)
+	}
+
+	if col2 < 0 || col2 >= width {
+		t.Errorf("Invalid random move: %v should be between 0 and %v", col, width)
+	}
+}
+
 func TestConvertBoard(t *testing.T) {
 	sampleBoard := [][]int{
 		{0, 0, 0, 0, 0, 0, 0},

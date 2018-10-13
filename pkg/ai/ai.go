@@ -1,7 +1,9 @@
 package ai
 
 import (
+	"math/rand"
 	"strconv"
+	"time"
 
 	"github.com/gokultp/go-four-in-a-row/pkg/game"
 	"github.com/pkg/errors"
@@ -13,6 +15,37 @@ type C4AI struct{}
 // MakeMove takes a game and returns a valid move
 func (ai *C4AI) MakeMove(g *game.Game) int {
 	return 0
+}
+
+func makeRandomMove(mask int64, width int, height int) (int, error) {
+	triedMoves := make(map[int]bool)
+	count := 0
+	for {
+		randomColNum, ok := randomCol(triedMoves, width, count)
+		if !ok {
+			return 0, errors.New("No moves possible")
+		}
+		_, ok = makeMoveOne(mask, randomColNum, uint64(height))
+		if !ok {
+			triedMoves[randomColNum] = true
+			count++
+		} else {
+			return randomColNum, nil
+		}
+	}
+}
+
+func randomCol(tried map[int]bool, width int, count int) (int, bool) {
+	if count >= width {
+		return 0, false
+	}
+	seed := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(seed)
+	randomColNum := random.Intn(width)
+	if tried[randomColNum] == true {
+		return randomCol(tried, width, count)
+	}
+	return randomColNum, true
 }
 
 func convertBoard(board [][]int) (int64, int64, error) {
