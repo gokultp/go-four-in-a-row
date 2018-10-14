@@ -26,6 +26,49 @@ func TestMakeMove(t *testing.T) {
 	}
 }
 
+func TestSmartMove(t *testing.T) {
+	width := 7
+	height := 6
+	depth := 5
+
+	sampleBoardOneMove := [][]int{
+		{0, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 0, 1, 0, 0},
+		{1, 0, 0, 0, 1, 0, 0},
+		{1, 0, 0, 1, 2, 0, 2},
+		{2, 1, 0, 2, 1, 0, 2},
+		{2, 1, 2, 1, 2, 2, 2},
+	}
+
+	sampleBoardTwoMoves := [][]int{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 1, 1, 0, 0},
+		{0, 0, 0, 2, 2, 0, 0},
+	}
+
+	position, mask, _ := convertBoard(sampleBoardOneMove)
+	position2, mask2, _ := convertBoard(sampleBoardTwoMoves)
+
+	path := makeSmartMove(position, mask, width, height, depth)
+
+	if path.column != 2 {
+		t.Fatalf("Failed to make winning move: %v should be 2", path.column)
+	}
+
+	if path.score != depth {
+		t.Fatalf("Failed to make calculate move score: %v should be %v", path.score, depth)
+	}
+
+	path2 := makeSmartMove(position2, mask2, width, height, depth)
+
+	if path2.column != 2 && path2.column != 5 {
+		t.Fatalf("Failed to make best move: %v should be 2 or 5", path2.column)
+	}
+}
+
 func TestRandomMove(t *testing.T) {
 	width := 7
 	height := 6
@@ -209,21 +252,25 @@ func TestAddMove(t *testing.T) {
 		{0, 0, 2, 1, 2, 2, 0},
 	}
 	position, mask, err := convertBoard(sampleBoard)
-	positionR, _, err := convertBoard(sampleBoardResult)
-	_, maskR, err := convertBoard(sampleBoardResultTwo)
+	positionR, maskR, err := convertBoard(sampleBoardResult)
+	_, maskR2, err := convertBoard(sampleBoardResultTwo)
 	if err != nil {
 		t.Errorf("Failed to converboard with error: %s", err.Error())
 	}
 
 	newMask, ok := makeMoveOne(mask, moveCol, height)
-	newPosition, ok := makeMoveTwo(position, mask, moveCol, height)
+	newPosition2, newMask2, ok := makeMoveTwo(position, mask, moveCol, height)
 
-	if newMask != maskR || ok != true {
+	if newMask != maskR2 || ok != true {
 		t.Errorf("Failed to make move: %v should equal %v", newMask, maskR)
 	}
 
-	if newPosition != positionR || ok != true {
-		t.Errorf("Failed to make move: %v should equal %v", newPosition, positionR)
+	if newPosition2 != positionR || ok != true {
+		t.Errorf("Failed to make move: %v should equal %v", newPosition2, positionR)
+	}
+
+	if newMask2 != maskR || ok != true {
+		t.Errorf("Failed to make move: %v should equal %v", newMask2, maskR)
 	}
 }
 
