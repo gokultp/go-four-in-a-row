@@ -11,9 +11,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// C4AI represents the AI for connect four
-type C4AI struct{}
-
 type pathNode struct {
 	column  int
 	score   int
@@ -21,12 +18,12 @@ type pathNode struct {
 }
 
 // MakeMove takes a game and returns a valid move
-func (ai *C4AI) MakeMove(g *game.Game) int {
+func MakeMove(g *game.Game) int {
 	position, mask, err := convertBoard(g.State)
 	if err != nil {
 		log.Fatalf("Failed to convert board with error: %s", err.Error())
 	}
-	depth := 5
+	depth := 7
 	path := makeSmartMove(position, mask, g.Width, g.Height, depth)
 	return path.column
 }

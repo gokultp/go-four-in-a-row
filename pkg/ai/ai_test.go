@@ -4,13 +4,12 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/gokultp/go-four-in-a-row/pkg/game"
+	"github.com/berto/go-four-in-a-row/pkg/game"
 )
 
 func TestMakeMove(t *testing.T) {
 	g := game.NewGame(10, 10)
-	ai := C4AI{}
-	move := ai.MakeMove(g)
+	move := MakeMove(g)
 	playerBeforeMove := g.CurrentPlayer
 	g.Input(move)
 	playerAfterMove := g.CurrentPlayer
@@ -29,7 +28,7 @@ func TestMakeMove(t *testing.T) {
 func TestSmartMove(t *testing.T) {
 	width := 7
 	height := 6
-	depth := 5
+	depth := 7
 
 	sampleBoardOneMove := [][]int{
 		{0, 0, 0, 0, 1, 0, 0},
