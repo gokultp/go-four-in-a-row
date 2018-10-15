@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/berto/go-four-in-a-row/pkg/game"
+	"github.com/gokultp/go-four-in-a-row/pkg/game"
 )
 
 func TestMakeMove(t *testing.T) {

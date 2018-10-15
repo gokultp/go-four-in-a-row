@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/berto/go-four-in-a-row/pkg/game"
+	"github.com/gokultp/go-four-in-a-row/pkg/game"
 	"github.com/pkg/errors"
 )
 
