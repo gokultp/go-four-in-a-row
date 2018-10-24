@@ -36,7 +36,8 @@ func main() {
 		height = 6
 	}
 
-	g := game.NewGame(width, height)
+	var g *game.Game
+	g = game.NewGame(width, height)
 	g.Draw()
 
 loop:
