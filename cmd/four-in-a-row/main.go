@@ -37,7 +37,7 @@ func main() {
 	}
 
 	g := game.NewGame(width, height)
-	g.Draw()
+	g.SplashScreen()
 
 loop:
 	for {
