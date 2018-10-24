@@ -26,19 +26,24 @@ type Game struct {
 	Cancel        context.CancelFunc
 }
 
-// NewGame return a new instance of game
-func NewGame(width, height int) *Game {
+func getEmptyState(height, width int) [][]int {
 	state := [][]int{}
 	for i := 0; i < height; i++ {
 		rowState := make([]int, width)
 		state = append(state, rowState)
 	}
+	return state
+}
+
+// NewGame return a new instance of game
+func NewGame(width, height int) *Game {
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	game := &Game{
 		Width:         width,
 		Height:        height,
-		State:         state,
+		State:         getEmptyState(height, width),
 		CurrentPlayer: 1,
 		ctx:           ctx,
 		Cancel:        cancel,
@@ -245,4 +250,51 @@ func (g *Game) togglePlayer() {
 
 func (g *Game) Input(col int) {
 	g.addEntry(col, g.CurrentPlayer)
+}
+
+func (g *Game) generateSplashContent() {
+	g.State[1][5] = 1
+	g.State[2][4] = 1
+	g.State[2][5] = 2
+	g.State[3][4] = 1
+	g.State[3][5] = 2
+	g.State[4][3] = 2
+	g.State[4][5] = 1
+	g.State[5][3] = 2
+	g.State[5][5] = 1
+	g.State[6][2] = 2
+	g.State[6][3] = 1
+	g.State[6][4] = 2
+	g.State[6][5] = 1
+	g.State[6][6] = 2
+	g.State[6][7] = 1
+	g.State[7][5] = 2
+	g.State[8][5] = 2
+
+	g.Draw()
+	g.Winner = 2
+}
+
+func (g *Game) SplashScreen() {
+	go func(g *Game) {
+		show := true
+	inf_loop:
+		for {
+			select {
+			case <-g.ctx.Done():
+				g = NewGame(g.Width, g.Height)
+				g.Draw()
+				break inf_loop
+			default:
+			}
+			if show {
+				g.generateSplashContent()
+			} else {
+				g.State = getEmptyState(g.Height, g.Width)
+			}
+			g.Draw()
+			show = !show
+			time.Sleep(time.Millisecond * 500)
+		}
+	}(g)
 }
