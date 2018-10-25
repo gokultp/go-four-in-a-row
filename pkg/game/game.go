@@ -11,38 +11,12 @@ import (
 var PlayerChar = []string{"\\//\\", "/\\\\/"}
 var piece = '█'
 
-type Manager struct {
-	CurrentGame   *Game
-	playerOneWins int
-	playerTwoWins int
-}
-
-func NewManager(width, height int) *Manager {
-	return &Manager{
-		CurrentGame:   NewGame(width, height),
-		playerOneWins: 0,
-		playerTwoWins: 0,
-	}
-}
-
-func (m *Manager) Draw() {
-	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	ch, fore, bg := getplayerDisplayProps(1)
-	m.CurrentGame.Draw()
-
-	m.CurrentGame.paintCell(2, 2, ch, fore, bg)
-	termbox.Flush()
-}
-
-func (m *Manager) NewGame(winner int) {
-	m.CurrentGame.Cancel()
-	m.CurrentGame = NewGame(m.CurrentGame.Width, m.CurrentGame.Height)
-	if winner == 1 {
-		m.playerOneWins++
-	} else if winner == 2 {
-		m.playerTwoWins++
-	}
-}
+const (
+	 winsLabelX = -2
+	 winsCountX = winsLabelX + 1
+	 p1WinsLabelY = 0
+	 p2WinsLabelY = 1
+)
 
 // Game defines the state of the game and arena details
 type Game struct {
@@ -57,10 +31,12 @@ type Game struct {
 	wonState      [][]int
 	ctx           context.Context
 	Cancel        context.CancelFunc
+	PlayerOneWins int
+	PlayerTwoWins int
 }
 
 // NewGame return a new instance of game
-func NewGame(width, height int) *Game {
+func NewGame(width, height, playerOneWins, playerTwoWins int) *Game {
 	state := [][]int{}
 	for i := 0; i < height; i++ {
 		rowState := make([]int, width)
@@ -75,6 +51,8 @@ func NewGame(width, height int) *Game {
 		CurrentPlayer: 1,
 		ctx:           ctx,
 		Cancel:        cancel,
+		PlayerOneWins: playerOneWins,
+		PlayerTwoWins: playerTwoWins,
 	}
 	game.getOffset()
 	return game
@@ -82,10 +60,21 @@ func NewGame(width, height int) *Game {
 
 // Draw is the main routine which paints the current state
 func (g *Game) Draw() {
-	// termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	for x := 0; x < g.Width; x++ {
 		g.paintCell(x, -2, rune(48+x), termbox.ColorYellow, termbox.ColorDefault)
 	}
+
+	// Place player one wins to the left, a few rows down
+	r, fore, bg := getplayerDisplayProps(1)
+	g.paintCell(winsLabelX, p1WinsLabelY, r, fore, bg)
+	g.paintCell(winsCountX, p1WinsLabelY, rune(48+g.PlayerOneWins), termbox.ColorGreen, termbox.ColorDefault)
+
+	// Place player two wins right below the player one wins
+	r, fore, bg = getplayerDisplayProps(2)
+	g.paintCell(winsLabelX, p2WinsLabelY, r, fore, bg)
+	g.paintCell(winsCountX, p2WinsLabelY, rune(48+g.PlayerTwoWins), termbox.ColorGreen, termbox.ColorDefault)
+
 	for y := 0; y < g.Height; y++ {
 		for x := 0; x < g.Width; x++ {
 			g.setContent(x, y)
