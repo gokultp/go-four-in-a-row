@@ -11,6 +11,13 @@ import (
 var PlayerChar = []string{"\\//\\", "/\\\\/"}
 var piece = '█'
 
+const (
+	 winsLabelX = -2
+	 winsCountX = winsLabelX + 1
+	 p1WinsLabelY = 0
+	 p2WinsLabelY = 1
+)
+
 // Game defines the state of the game and arena details
 type Game struct {
 	State         [][]int
@@ -24,10 +31,12 @@ type Game struct {
 	wonState      [][]int
 	ctx           context.Context
 	Cancel        context.CancelFunc
+	PlayerOneWins int
+	PlayerTwoWins int
 }
 
 // NewGame return a new instance of game
-func NewGame(width, height int) *Game {
+func NewGame(width, height, playerOneWins, playerTwoWins int) *Game {
 	state := [][]int{}
 	for i := 0; i < height; i++ {
 		rowState := make([]int, width)
@@ -42,21 +51,36 @@ func NewGame(width, height int) *Game {
 		CurrentPlayer: 1,
 		ctx:           ctx,
 		Cancel:        cancel,
+		PlayerOneWins: playerOneWins,
+		PlayerTwoWins: playerTwoWins,
 	}
 	game.getOffset()
 	return game
 }
 
+// Draw is the main routine which paints the current state
 func (g *Game) Draw() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	for x := 0; x < g.Width; x++ {
-		termbox.SetCell(g.offsetX+x*3, g.offsetY-2, rune(48+x), termbox.ColorYellow, termbox.ColorDefault)
+		g.paintCell(x, -2, rune(48+x), termbox.ColorYellow, termbox.ColorDefault)
 	}
+
+	// Place player one wins to the left, a few rows down
+	r, fore, bg := getplayerDisplayProps(1)
+	g.paintCell(winsLabelX, p1WinsLabelY, r, fore, bg)
+	g.paintCell(winsCountX, p1WinsLabelY, rune(48+g.PlayerOneWins), termbox.ColorGreen, termbox.ColorDefault)
+
+	// Place player two wins right below the player one wins
+	r, fore, bg = getplayerDisplayProps(2)
+	g.paintCell(winsLabelX, p2WinsLabelY, r, fore, bg)
+	g.paintCell(winsCountX, p2WinsLabelY, rune(48+g.PlayerTwoWins), termbox.ColorGreen, termbox.ColorDefault)
+
 	for y := 0; y < g.Height; y++ {
 		for x := 0; x < g.Width; x++ {
-			g.setContent(x, y, true)
+			g.setContent(x, y)
 		}
 	}
+
 	termbox.Flush()
 }
 
@@ -66,21 +90,29 @@ func (g *Game) getOffset() {
 	g.offsetY = (sh - g.Height*2) / 2
 }
 
-func (g *Game) setContent(x, y int, show bool) {
-	for i := 0; i < 2; i++ {
-		for j := 0; j < 1; j++ {
-			ch, fore, bg := getplayerDisplayPropsLarge(g.State[y][x], i, j)
-			if show {
-				termbox.SetCell((g.offsetX + x*3 + i), (g.offsetY + y*2 + j), ch, fore, bg)
-			} else {
-				termbox.SetCell((g.offsetX + x*3 + i), (g.offsetY + y*2 + j), ch, fore, termbox.ColorDefault)
-			}
-		}
-	}
-
-	// ch, fore, bg := getplayerDisplayProps(g.State[y][x])
-	// termbox.SetCell((g.offsetX + x*3), (g.offsetY + y*2), ch, fore, bg)
+func (g *Game) setContent(x, y int) {
+	ch, fore, bg := getplayerDisplayPropsLarge(g.State[y][x])
+	// Paint a double square
+	g.setCell(x*3, y*2, ch, fore, bg)
+	g.setCell(x*3+1, y*2, ch, fore, bg)
 }
+
+func (g *Game) paintCellWithSpacing(x, y int, ch rune, fore termbox.Attribute, bg termbox.Attribute) {
+	g.paintCell(x, y, ch, fore, bg)
+	// g.paintCell(x+1, y, rune('h'), fore, bg)
+}
+
+// Paint Cell performs the multiplication of location and defers to setCell for offset calculation,
+// given absolute coordinates and what to draw.
+func (g *Game) paintCell(x, y int, ch rune, fore termbox.Attribute, bg termbox.Attribute) {
+	g.setCell(x*3, y*2, ch, fore, bg)
+}
+
+// setCell performs offset calculation given coordinates and paints using termbox
+func (g *Game) setCell(x, y int, ch rune, fore termbox.Attribute, bg termbox.Attribute) {
+	termbox.SetCell((g.offsetX + x), (g.offsetY + y), ch, fore, bg)
+}
+
 func getplayerDisplayProps(player int) (rune, termbox.Attribute, termbox.Attribute) {
 	if player == 1 {
 		return piece, termbox.ColorRed, termbox.ColorDefault
@@ -90,7 +122,10 @@ func getplayerDisplayProps(player int) (rune, termbox.Attribute, termbox.Attribu
 	}
 	return piece, termbox.ColorDefault, termbox.ColorBlack
 }
-func getplayerDisplayPropsLarge(player, col, row int) (rune, termbox.Attribute, termbox.Attribute) {
+
+// TODO: move getting display related functions to another place,
+// and make this one actually return large props
+func getplayerDisplayPropsLarge(player int) (rune, termbox.Attribute, termbox.Attribute) {
 	if player == 1 {
 		return piece, termbox.ColorRed, termbox.ColorDefault
 	}
@@ -200,14 +235,12 @@ func (g *Game) declareWinner() {
 		for {
 			select {
 			case <-g.ctx.Done():
-				g = NewGame(g.Width, g.Height)
-				g.Draw()
+				// Once cancel is called lets break out of this loop
 				break inf_loop
 			default:
 			}
-			for i := 0; i < 4; i++ {
-				g.setContent(g.wonState[i][1], g.wonState[i][0], show)
-			}
+
+			// Until the cancel is called, this text will flash every 500 seconds
 			g.renderText("% won the game", show)
 			show = !show
 			termbox.Flush()
@@ -226,7 +259,7 @@ func (g *Game) renderText(text string, show bool) {
 			continue
 		}
 		if text[i] == byte('%') {
-			ch, fore, bg := getplayerDisplayProps(g.Winner)
+			ch, fore, bg := getplayerDisplayPropsLarge(g.Winner)
 			termbox.SetCell(x, y+i, ch, fore, bg)
 		} else {
 			termbox.SetCell(x+i, y, rune(text[i]), termbox.ColorWhite, termbox.ColorDefault)

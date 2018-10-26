@@ -36,7 +36,8 @@ func main() {
 		height = 6
 	}
 
-	g := game.NewGame(width, height)
+	m := game.NewManager()
+	g := game.NewGame(width, height, 0, 0)
 	g.Draw()
 
 loop:
@@ -47,8 +48,7 @@ loop:
 				break loop
 			} else if ev.Type == termbox.EventKey {
 				if g.Winner != 0 {
-					g.Cancel()
-					g = game.NewGame(width, height)
+					g = m.NewGame(g)
 					g.Draw()
 				} else {
 					g.Input(int(ev.Ch) - 48)
@@ -57,6 +57,7 @@ loop:
 						g.Input(move)
 					}
 				}
+				g.Draw()
 			}
 		}
 	}
