@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"strconv"
 	"time"
 
-	termbox "github.com/nsf/termbox-go"
+	"github.com/nsf/termbox-go"
 )
 
 // PlayerChar defines how should each player entries rendered
@@ -223,7 +225,7 @@ func (g *Game) isWon(col, row, player int) bool {
 	for ; col+i <= g.Width && row-i >= 0 && g.State[row-i][col+i] == player; i++ {
 	}
 	i--
-	for ; col+i >= 0 && row-i <= g.Height && g.State[row-i][col+i] == player; i-- {
+	for ; col+i >= 0 && row-i < g.Height && g.State[row-i][col+i] == player; i-- {
 		wonState = append(wonState, []int{row - i, col + i})
 		count++
 	}
@@ -334,10 +336,19 @@ func (g *Game) SplashScreen() {
 	}(g)
 }
 
-func (g *Game) String() string {
+func (g *Game) StateString() string {
 	var buf bytes.Buffer
 	for _, cols := range g.State {
-		fmt.Fprintf(&buf, "%v\n", cols)
+		buf.WriteRune('`')
+		for _, c := range cols {
+			buf.WriteString(strconv.Itoa(c))
+		}
+		buf.WriteString("`,\n")
 	}
 	return buf.String()
+}
+
+func (g *Game) WriteState(w io.Writer) {
+	fmt.Fprintf(w, "+%v\n", g)
+	w.Write([]byte(g.StateString()))
 }

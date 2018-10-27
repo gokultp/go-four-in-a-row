@@ -36,15 +36,15 @@ func TestGame_isWon(t *testing.T) {
 		col    int
 		row    int
 		player int
-		state []string
+		state  []string
 		want   bool
 	}{
 		"5x4 game vertical 2 item": {
-			name: "",
-			game: NewGame(5, 4, 0, 0),
-			want: false,
-			col: 2,
-			row: 1,
+			name:   "",
+			game:   NewGame(5, 4, 0, 0),
+			want:   false,
+			col:    2,
+			row:    1,
 			player: 1,
 			state: []string{
 				`00000`,
@@ -54,11 +54,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"5x4 game vertical 4 item win": {
-			name: "",
-			game: NewGame(5, 4, 0, 0),
-			want: true,
-			col: 2,
-			row: 0,
+			name:   "",
+			game:   NewGame(5, 4, 0, 0),
+			want:   true,
+			col:    2,
+			row:    0,
 			player: 1,
 			state: []string{
 				`00100`,
@@ -68,11 +68,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"5x4 game vertical 4 item not win": {
-			name: "",
-			game: NewGame(5, 4, 0, 0),
-			want: false,
-			col: 1,
-			row: 0,
+			name:   "",
+			game:   NewGame(5, 4, 0, 0),
+			want:   false,
+			col:    1,
+			row:    0,
 			player: 1,
 			state: []string{
 				`00100`,
@@ -82,11 +82,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x4 game horizontal 4 from left": {
-			name: "",
-			game: NewGame(6, 4, 0, 0),
-			want: true,
-			col: 3,
-			row: 1,
+			name:   "",
+			game:   NewGame(6, 4, 0, 0),
+			want:   true,
+			col:    3,
+			row:    1,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -96,11 +96,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x4 game horizontal 4 from right": {
-			name: "",
-			game: NewGame(6, 4, 0, 0),
-			want: true,
-			col: 4,
-			row: 1,
+			name:   "",
+			game:   NewGame(6, 4, 0, 0),
+			want:   true,
+			col:    4,
+			row:    1,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -110,11 +110,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x4 game horizontal 4 middle": {
-			name: "",
-			game: NewGame(6, 4, 0, 0),
-			want: true,
-			col: 1,
-			row: 1,
+			name:   "",
+			game:   NewGame(6, 4, 0, 0),
+			want:   true,
+			col:    1,
+			row:    1,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -124,11 +124,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x4 game horizontal 3 left": {
-			name: "",
-			game: NewGame(6, 4, 0, 0),
-			want: false,
-			col: 1,
-			row: 1,
+			name:   "",
+			game:   NewGame(6, 4, 0, 0),
+			want:   false,
+			col:    1,
+			row:    1,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -138,11 +138,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x4 game horizontal 3 right": {
-			name: "",
-			game: NewGame(6, 4, 0, 0),
-			want: false,
-			col: 1,
-			row: 1,
+			name:   "",
+			game:   NewGame(6, 4, 0, 0),
+			want:   false,
+			col:    1,
+			row:    1,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -152,11 +152,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x4 game horizontal 3 middle": {
-			name: "",
-			game: NewGame(6, 4, 0, 0),
-			want: false,
-			col: 1,
-			row: 1,
+			name:   "",
+			game:   NewGame(6, 4, 0, 0),
+			want:   false,
+			col:    1,
+			row:    1,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -166,11 +166,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x5 game negative diagonal 3 top left": {
-			name: "",
-			game: NewGame(6, 5, 0, 0),
-			want: false,
-			col: 3,
-			row: 3,
+			name:   "",
+			game:   NewGame(6, 5, 0, 0),
+			want:   false,
+			col:    3,
+			row:    3,
 			player: 1,
 			state: []string{
 				`100000`,
@@ -181,11 +181,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x5 game negative diagonal 4 top left": {
-			name: "",
-			game: NewGame(6, 5, 0, 0),
-			want: true,
-			col: 3,
-			row: 3,
+			name:   "",
+			game:   NewGame(6, 5, 0, 0),
+			want:   true,
+			col:    3,
+			row:    3,
 			player: 1,
 			state: []string{
 				`100000`,
@@ -196,11 +196,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x5 game negative diagonal 4 bottom right": {
-			name: "",
-			game: NewGame(6, 5, 0, 0),
-			want: true,
-			col: 5,
-			row: 4,
+			name:   "",
+			game:   NewGame(6, 5, 0, 0),
+			want:   true,
+			col:    5,
+			row:    4,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -211,11 +211,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x6 game negative diagonal 4 middle": {
-			name: "",
-			game: NewGame(6, 6, 0, 0),
-			want: true,
-			col: 1,
-			row: 1,
+			name:   "",
+			game:   NewGame(6, 6, 0, 0),
+			want:   true,
+			col:    1,
+			row:    1,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -227,11 +227,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x5 game positive diagonal 3 top right": {
-			name: "",
-			game: NewGame(6, 5, 0, 0),
-			want: false,
-			col: 5,
-			row: 0,
+			name:   "",
+			game:   NewGame(6, 5, 0, 0),
+			want:   false,
+			col:    5,
+			row:    0,
 			player: 1,
 			state: []string{
 				`000001`,
@@ -242,11 +242,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x5 game positive diagonal 4 top right": {
-			name: "",
-			game: NewGame(6, 5, 0, 0),
-			want: true,
-			col: 5,
-			row: 0,
+			name:   "",
+			game:   NewGame(6, 5, 0, 0),
+			want:   true,
+			col:    5,
+			row:    0,
 			player: 1,
 			state: []string{
 				`000001`,
@@ -257,11 +257,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x5 game positive diagonal 4 bottom left": {
-			name: "",
-			game: NewGame(6, 5, 0, 0),
-			want: true,
-			col: 0,
-			row: 4,
+			name:   "",
+			game:   NewGame(6, 5, 0, 0),
+			want:   true,
+			col:    0,
+			row:    4,
 			player: 1,
 			state: []string{
 				`000000`,
@@ -272,11 +272,11 @@ func TestGame_isWon(t *testing.T) {
 			},
 		},
 		"6x6 game positive diagonal 4 middle": {
-			name: "",
-			game: NewGame(6, 6, 0, 0),
-			want: true,
-			col: 1,
-			row: 3,
+			name:   "",
+			game:   NewGame(6, 6, 0, 0),
+			want:   true,
+			col:    1,
+			row:    3,
 			player: 1,
 			state: []string{
 				`000010`,
@@ -286,6 +286,22 @@ func TestGame_isWon(t *testing.T) {
 				`000000`,
 			},
 		},
+		"6x6 game on corner": {
+			name:   "",
+			game:   NewGame(6, 6, 0, 0),
+			want:   false,
+			col:    2,
+			row:    5,
+			player: 1,
+			state: []string{
+				`000000`,
+				`000000`,
+				`000000`,
+				`000000`,
+				`200000`,
+				`101000`,
+			},
+		},
 	}
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -293,7 +309,7 @@ func TestGame_isWon(t *testing.T) {
 
 			err := applyState(tt.game, tt.state)
 			if err != nil {
-			    t.Fatalf("failed to apply state: %v", err)
+				t.Fatalf("failed to apply state: %v", err)
 			}
 
 			if got := g.isWon(tt.col, tt.row, tt.player); got != tt.want {
