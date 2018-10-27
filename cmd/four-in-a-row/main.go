@@ -38,27 +38,43 @@ func main() {
 
 	m := game.NewManager()
 	g := game.NewGame(width, height, 0, 0)
-	g.SplashScreen()
+
+	// splash screen only compatible with minimal 9x8 window
+	if g.Height >= 9 || g.Width >= 8 {
+		g.SplashScreen()
+	} else {
+		g = m.NewGame(g)
+		g.Draw()
+	}
 
 loop:
 	for {
 		select {
 		case ev := <-eventQueue:
-			if ev.Type == termbox.EventKey && ev.Key == termbox.KeyEsc {
-				break loop
-			} else if ev.Type == termbox.EventKey {
-				if g.Winner != 0 {
-					g = m.NewGame(g)
-					g.Draw()
-				} else {
-					g.Input(int(ev.Ch) - 48)
-					if g.CurrentPlayer == 2 && *vsAI {
-						move := ai.MakeMove(g)
-						g.Input(move)
-					}
-				}
-				g.Draw()
+			if ev.Type != termbox.EventKey {
+				continue
 			}
+
+			if ev.Key == termbox.KeyEsc {
+				break loop
+			}
+
+			// reset game
+			if g.Winner != 0 {
+				g = m.NewGame(g)
+				g.Draw()
+				continue
+			}
+
+			// in the middle of a game
+			g.Input(int(ev.Ch) - 48)
+			if g.CurrentPlayer == 2 && *vsAI {
+				move := ai.MakeMove(g)
+				g.Input(move)
+			}
+
+			g.Draw()
+
 		}
 	}
 }
