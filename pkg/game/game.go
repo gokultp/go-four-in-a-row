@@ -1,7 +1,9 @@
 package game
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"time"
 
 	termbox "github.com/nsf/termbox-go"
@@ -169,7 +171,7 @@ func (g *Game) isWon(col, row, player int) bool {
 	// check vertically
 	wonState := make([][]int, 0)
 	count := 0
-	for i := row; i < g.Width && g.State[i][col] == player; i++ {
+	for i := row; i < g.Height && g.State[i][col] == player; i++ {
 		count++
 		wonState = append(wonState, []int{i, col})
 	}
@@ -182,7 +184,7 @@ func (g *Game) isWon(col, row, player int) bool {
 	wonState = make([][]int, 0)
 	count = 0
 	i := col
-	for ; i > 0 && g.State[row][i] == player; i-- {
+	for ; i >= 0 && g.State[row][i] == player; i-- {
 	}
 	i++
 	// check horizontally right
@@ -200,7 +202,7 @@ func (g *Game) isWon(col, row, player int) bool {
 	wonState = make([][]int, 0)
 	i = 0
 	count = 0
-	for ; col-i > 0 && row-i > 0 && g.State[row-i][col-i] == player; i++ {
+	for ; col-i >= 0 && row-i >= 0 && g.State[row-i][col-i] == player; i++ {
 	}
 	i--
 
@@ -218,10 +220,10 @@ func (g *Game) isWon(col, row, player int) bool {
 	wonState = make([][]int, 0)
 	i = 0
 	count = 0
-	for ; col+i < g.Width && row-i > 0 && g.State[row-i][col+i] == player; i++ {
+	for ; col+i <= g.Width && row-i >= 0 && g.State[row-i][col+i] == player; i++ {
 	}
 	i--
-	for ; col+i > 0 && row-i < g.Height && g.State[row-i][col+i] == player; i-- {
+	for ; col+i >= 0 && row-i <= g.Height && g.State[row-i][col+i] == player; i-- {
 		wonState = append(wonState, []int{row - i, col + i})
 		count++
 	}
@@ -330,4 +332,12 @@ func (g *Game) SplashScreen() {
 			time.Sleep(time.Millisecond * 500)
 		}
 	}(g)
+}
+
+func (g *Game) String() string {
+	var buf bytes.Buffer
+	for _, cols := range g.State {
+		fmt.Fprintf(&buf, "%v\n", cols)
+	}
+	return buf.String()
 }
