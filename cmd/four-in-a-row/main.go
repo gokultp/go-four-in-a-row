@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 
 	"github.com/gokultp/go-four-in-a-row/pkg/ai"
 	"github.com/gokultp/go-four-in-a-row/pkg/game"
@@ -46,6 +47,17 @@ func main() {
 		g = m.NewGame(g)
 		g.Draw()
 	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			f, err := os.Create("dump.txt")
+			if err == nil {
+				g.WriteState(f)
+				f.Close()
+			}
+			panic(r)
+		}
+	}()
 
 loop:
 	for {
