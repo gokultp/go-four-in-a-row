@@ -285,6 +285,7 @@ func (g *Game) togglePlayer() {
 	g.CurrentPlayer = 1
 }
 
+// Input adds an input to game
 func (g *Game) Input(col int) {
 	g.addEntry(col, g.CurrentPlayer)
 }
@@ -312,6 +313,7 @@ func (g *Game) generateSplashContent() {
 	g.Winner = 3
 }
 
+// SplashScreen will render splash screen animation
 func (g *Game) SplashScreen() {
 	go func(g *Game) {
 		show := true
