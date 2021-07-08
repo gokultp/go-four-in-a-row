@@ -84,6 +84,14 @@ func (g *Game) Draw() {
 	g.paintCell(winsLabelX, p2WinsLabelY, r, fore, bg)
 	g.paintCell(winsCountX, p2WinsLabelY, rune(48+g.PlayerTwoWins), termbox.ColorGreen, termbox.ColorDefault)
 
+	// Place a cell showing what is the current "player" to run
+	text := "Current Player: "
+	for k, v := range text {
+		g.paintCell(winsLabelX-len(text)+k, p2WinsLabelY+2, v, termbox.ColorGreen, termbox.ColorDefault)
+	}
+	r, fore, bg = getplayerDisplayProps(g.CurrentPlayer)
+	g.paintCell(winsLabelX, p2WinsLabelY+2, r, fore, bg)
+
 	for y := 0; y < g.Height; y++ {
 		for x := 0; x < g.Width; x++ {
 			g.setContent(x, y)
